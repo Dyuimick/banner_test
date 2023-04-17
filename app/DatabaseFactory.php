@@ -10,7 +10,7 @@ class DatabaseFactory
 
         switch ($driver) {
             case 'sqlite':
-                return new SQLiteAdapter($config[$driver]);
+                return new SQLiteAdapter($config[$driver]['dsn']);
             default:
                 throw new \InvalidArgumentException("Unsupported database driver: $driver");
         }

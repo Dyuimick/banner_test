@@ -4,6 +4,6 @@ CREATE TABLE tracker (
   view_date DATETIME NOT NULL,
   page_url VARCHAR(255) NOT NULL,
   views_count INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (ip_address, user_agent, page_url),
-  UNIQUE (ip_address, user_agent, page_url)
+  PRIMARY KEY (view_date, user_agent, page_url, ip_address),
+  UNIQUE (view_date, user_agent, page_url, ip_address)
 );

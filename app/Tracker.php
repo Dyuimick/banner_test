@@ -4,27 +4,27 @@ namespace App;
 
 class Tracker
 {
-    private DatabaseAdapterInterface $adapter;
+    private IDatabaseAdapter $adapter;
 
     public function __construct(IDatabaseAdapter $adapter)
     {
         $this->adapter = $adapter;
     }
 
-    public function save(BannerDTO $data): bool
+    public function save(BannerDTO $bannerDTO): array
     {
-        $ipAddress = $data->getIpAddress();
-        $userAgent = $data->getUserAgent();
-        $pageUrl = $data->getPageUrl();
-        $viewDate = $data->getViewDate();
+        $sql = "INSERT INTO tracker (view_date, user_agent,  page_url, ip_address, views_count) 
+VALUES (:view_date, :user_agent, :page_url, :ip_address, 1)
+ ON CONFLICT (view_date, user_agent, page_url, ip_address) DO 
+UPDATE SET views_count = views_count + 1;";
+        $params = [
+            ':ip_address' => $bannerDTO->getIpAddress(),
+            ':user_agent' => $bannerDTO->getUserAgent(),
+            ':view_date' => $bannerDTO->getViewDate(),
+            ':page_url' => $bannerDTO->getPageUrl(),
+        ];
 
-        $sql = "INSERT INTO banner_views (ip_address, user_agent, view_date, page_url, views_count)
-                VALUES ('$ipAddress', '$userAgent', '$viewDate', '$pageUrl', 1)
-                ON DUPLICATE KEY UPDATE
-                view_date = VALUES(view_date),
-                views_count = views_count + 1;";
-
-        return $this->adapter->query($sql) === TRUE;
+        return $this->adapter->query($sql, $params);
     }
 }
 
